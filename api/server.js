@@ -8,19 +8,21 @@ dotenv.config();
 const app = express();
 
 // Middleware
+
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin) return callback(null, true); // السماح للPostman أو server-to-server
+    if (!origin) return callback(null, true); // requests من Postman أو server-to-server
     if (origin.startsWith("http://localhost")) {
-      return callback(null, true);
+      return callback(null, true); // السماح لأي بورت محلي
     }
     if (origin === "https://fadelprofile.vercel.app") {
-      return callback(null, true);
+      return callback(null, true); // السماح للفرونت على Vercel
     }
     return callback(new Error("Not allowed by CORS"));
   },
   methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
+  credentials: true,
+  optionsSuccessStatus: 200 // مهم للـ preflight
 }));
 
 app.use(express.json());
