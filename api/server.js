@@ -1,17 +1,16 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import contactRoutes from "./routes/contact.js";
+import contactRoutes from "../routes/contact.js";
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   "https://fadelprofile.vercel.app",
-  "https://fadelprofile-eziq9pw2p-fadel-s-projects.vercel.app" 
+  "https://fadelprofile-eziq9pw2p-fadel-s-projects.vercel.app"
 ];
 
 app.use(
@@ -32,9 +31,8 @@ app.use(express.json());
 app.use("/api/contact", contactRoutes);
 
 app.get("/", (req, res) => {
-  res.send("BackendPro is running!");
+  res.send("BackendPro is running on Vercel!");
 });
 
-app.listen(PORT, () => {
-  // console.log(`Server is running on http://localhost:${PORT}`);
-});
+// ✅ نصدّر السيرفر بدل app.listen
+export default app;
