@@ -1,9 +1,7 @@
-import express from "express";
-import dotenv from "dotenv";
 import Brevo from "@getbrevo/brevo";
+import dotenv from "dotenv";
 
 dotenv.config();
-const router = express.Router();
 
 const client = new Brevo.TransactionalEmailsApi();
 client.setApiKey(
@@ -11,25 +9,20 @@ client.setApiKey(
   process.env.BREVO_API_KEY
 );
 
-// ====== إضافة CORS headers ======
-router.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*"); // للسماح لأي localhost أو فرونت Vercel
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  next();
-});
+export default async function handler(req, res) {
+  if (req.method === "OPTIONS") {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    return res.status(204).end();
+  }
 
-// Handle preflight request
-router.options("/", (req, res) => {
-  res.sendStatus(204);
-});
-// ================================
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
-router.get("/", (req, res) => {
-  res.json({ message: "Contact route is alive!" });
-});
+  res.setHeader("Access-Control-Allow-Origin", "*");
 
-router.post("/", async (req, res) => {
   const { name, email, phone, message } = req.body;
 
   if (!name || !email || !message) {
@@ -37,7 +30,7 @@ router.post("/", async (req, res) => {
   }
 
   try {
-    const sendSmtpEmail = {
+    await client.sendTransacEmail({
       sender: { email: process.env.SENDER_EMAIL, name: "Portfolio Contact Form" },
       to: [{ email: process.env.RECEIVER_EMAIL, name: "Fadel" }],
       subject: `New Contact Message from ${name}`,
@@ -45,16 +38,15 @@ router.post("/", async (req, res) => {
         <h2>New Message from Portfolio Contact Form</h2>
         <p><strong>Name:</strong> ${name}</p>
         <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Phone:</strong> ${phone || "N/A"}</p>
+        <p><strong>Phone:</strong>: ${phone || "N/A"}</p>
         <p><strong>Message:</strong></p>
         <p>${message}</p>
       `,
-    };
-    await client.sendTransacEmail(sendSmtpEmail);
-    res.json({ message: "Your message has been sent successfully!" });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to send message. Try again later." });
-  }
-});
+    });
 
-export default router;
+    res.status(200).json({ message: "Your message has been sent successfully!" });
+  } catch (error) {
+    console.error("Brevo Error:", error);
+    res.status(500).json({ error: error.message || "Failed to send message" });
+  }
+}
