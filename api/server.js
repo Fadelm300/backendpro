@@ -13,6 +13,7 @@ const allowedOrigins = [
   "http://localhost:5174"  
 ];
 
+// إعداد CORS لكل الطلبات
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -23,11 +24,13 @@ app.use(
         callback(new Error("Not allowed by CORS"));
       }
     },
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true
   })
 );
-app.options("*", cors({
+
+// السماح بـ preflight لكل المسارات
+app.options("/api/contact", cors({
   origin: allowedOrigins,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true
