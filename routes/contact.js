@@ -11,6 +11,20 @@ client.setApiKey(
   process.env.BREVO_API_KEY
 );
 
+// ====== إضافة CORS headers ======
+router.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*"); // للسماح لأي localhost أو فرونت Vercel
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  next();
+});
+
+// Handle preflight request
+router.options("/", (req, res) => {
+  res.sendStatus(204);
+});
+// ================================
+
 router.get("/", (req, res) => {
   res.json({ message: "Contact route is alive!" });
 });
@@ -23,7 +37,6 @@ router.post("/", async (req, res) => {
   }
 
   try {
-   
     const sendSmtpEmail = {
       sender: { email: process.env.SENDER_EMAIL, name: "Portfolio Contact Form" },
       to: [{ email: process.env.RECEIVER_EMAIL, name: "Fadel" }],
@@ -39,7 +52,6 @@ router.post("/", async (req, res) => {
     };
     await client.sendTransacEmail(sendSmtpEmail);
     res.json({ message: "Your message has been sent successfully!" });
-    
   } catch (error) {
     res.status(500).json({ error: "Failed to send message. Try again later." });
   }
