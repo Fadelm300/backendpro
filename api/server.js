@@ -11,7 +11,7 @@ const app = express();
 app.use(cors({
   origin: [
     "https://fadelprofile.vercel.app", // رابط الفرونت بعد النشر
-    "http://localhost:5174"             // للتجربة محليًا
+    "http://localhost:5175"             // للتجربة محليًا
   ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
