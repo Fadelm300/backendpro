@@ -10,7 +10,9 @@ const app = express();
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   "https://fadelprofile.vercel.app",
-  "https://fadelprofile-eziq9pw2p-fadel-s-projects.vercel.app"
+  "https://fadelprofile-kvjiuqpep-fadel-s-projects.vercel.app", 
+  "http://localhost:5173", 
+  "https://backendpro-itjlkq7au-fadel-s-projects.vercel.app"
 ];
 
 app.use(
