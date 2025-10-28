@@ -7,7 +7,6 @@ dotenv.config();
 
 const app = express();
 
-// قائمة الدومينات المسموح لها الوصول (Frontend)
 const allowedOrigins = [
   "https://fadelprofile.vercel.app",
   "https://fadelprofile-4ea15uteq-fadel-s-projects.vercel.app",
@@ -20,13 +19,19 @@ app.use(
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
+        console.log("Blocked by CORS:", origin);
         callback(new Error("Not allowed by CORS"));
       }
     },
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
     credentials: true
   })
 );
+app.options("*", cors({
+  origin: allowedOrigins,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true
+}));
 
 app.use(express.json());
 app.use("/api/contact", contactRoutes);
@@ -35,5 +40,4 @@ app.get("/", (req, res) => {
   res.send("BackendPro is running on Vercel!");
 });
 
-// تصدير app ليشتغل على Vercel
 export default app;
