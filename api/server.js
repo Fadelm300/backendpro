@@ -7,12 +7,11 @@ dotenv.config();
 
 const app = express();
 
+// قائمة الدومينات المسموح لها الوصول (Frontend)
 const allowedOrigins = [
-  process.env.FRONTEND_URL,
   "https://fadelprofile.vercel.app",
-  "https://fadelprofile-kvjiuqpep-fadel-s-projects.vercel.app", 
-  "http://localhost:5173", 
-  "https://backendpro-itjlkq7au-fadel-s-projects.vercel.app"
+  "https://fadelprofile-4ea15uteq-fadel-s-projects.vercel.app",
+  "http://localhost:5174"  
 ];
 
 app.use(
@@ -25,7 +24,7 @@ app.use(
       }
     },
     methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
+    credentials: true
   })
 );
 
@@ -36,5 +35,5 @@ app.get("/", (req, res) => {
   res.send("BackendPro is running on Vercel!");
 });
 
-// ✅ نصدّر السيرفر بدل app.listen
+// تصدير app ليشتغل على Vercel
 export default app;
