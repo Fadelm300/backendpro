@@ -9,13 +9,20 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: [
-    "https://fadelprofile.vercel.app", // رابط الفرونت بعد النشر
-    "http://localhost:5175"             // للتجربة محليًا
-  ],
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // السماح للPostman أو server-to-server
+    if (origin.startsWith("http://localhost")) {
+      return callback(null, true);
+    }
+    if (origin === "https://fadelprofile.vercel.app") {
+      return callback(null, true);
+    }
+    return callback(new Error("Not allowed by CORS"));
+  },
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
+
 app.use(express.json());
 
 // Routes
